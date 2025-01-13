@@ -1,0 +1,88 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("dev.db")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum TipoUsuario {
+  DOADOR
+  ONG
+}
+
+model User {
+  id          String    @id @default(uuid())
+  email       String      @unique
+  password    String
+  tipoUsuario TipoUsuario
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Chaves estrangeiras
+  doadorId   Int?
+  receptorId Int?
+
+  // Relacionamentos
+  doador   ConstrucaoDoador? @relation(fields: [doadorId], references: [id])
+  receptor ConstrucaoOng?    @relation(fields: [receptorId], references: [id])
+  doacoes  Doacao[]
+
+  @@map("users")
+}
+
+model ConstrucaoDoador {
+  id              Int      @id @default(autoincrement())
+  nomeGalpao      String
+  email           String   @unique
+  pontoReferencia String
+  imgUrl          String?
+  telefone        String
+  nichoVendas     String
+  numeroGalpao    Int
+  createdAt       DateTime @default(now())
+
+  // Relacionamentos
+  doacoes Doacao[]
+  user    User[]
+}
+
+model ConstrucaoOng {
+  id               Int      @id @default(autoincrement())
+  nomeOrganizacao  String
+  cnpj             String   @unique
+  emailInstituicao String   @unique
+  imgUrl           String?
+  pontoReferencia  String
+  telefone         String
+  nichoVendas      String
+  areaAtuacao      String
+  createdAt        DateTime @default(now())
+
+  // Relacionamentos
+  interesses Doacao[]
+  user       User[]
+
+  // Chave estrangeira
+  userId String
+}
+
+model Doacao {
+  id        Int      @id @default(autoincrement())
+  status    String
+  imgUrl    String?
+  descricao String
+  peso      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  doador ConstrucaoDoador @relation(fields: [doadorId], references: [id])
+  ong    ConstrucaoOng?   @relation(fields: [ongId], references: [id])
+  user   User[]
+
+  // Chaves estrangeiras
+  doadorId Int
+  ongId    Int?
+}
