@@ -1,4 +1,10 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateConstrucaoDoadorDto } from './create-construcao-doador.dto';
-
-export class UpdateConstrucaoDoadorDto extends PartialType(CreateConstrucaoDoadorDto) {}
+export class UpdateDoadorDto {
+    nomeGalpao?: string;
+    email?: string;
+    pontoReferencia?: string;
+    imgUrl?: string;
+    telefone?: string;
+    nichoVendas?: string;
+    numeroGalpao?: number;
+  }
+  
